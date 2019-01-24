@@ -47,68 +47,85 @@ contract Phonebook_byID_leo {
         return f;
     }
     
+    //function to check value in the array
+    function checkposition(uint[100] memory c, uint d) private pure returns(uint){
+        uint f1 = 0;
+        for(uint j = 0; j<c.length; j++){
+            if(d == c[j]){
+                f1 = j; //has the same value, return true
+            }
+        }
+        return f1;
+    }
+    
     //Add person to phonebook
     function AddToPhonebook(uint pId, string memory name_, uint phonenum_) public returns(string memory){
         
         if(check(idofpeople, pId)){
-            return "This ID already exist. Please choose others.";
+            return ("This ID already exist. Please choose others.");
         }   else    {
             idofpeople[flagofidofpeople] = pId;
             flagofidofpeople++;
             people[pId].name = name_;
             people[pId].phonenum = phonenum_;
             peoplecount++;
-            return "OK. Successfully add.";
+            return("OK. Successfully add.");
         }
     }
     
     //Find person by Id
     function GetInfobyId(uint pId) public returns (string memory, uint) {
         
-        //store timestamp of calling each GetinfobyId 
-        time[flag] = block.timestamp;
+        //if exist this ID
+        if(check(idofpeople, pId)){
+            //store timestamp of calling each GetinfobyId 
+            time[flag] = block.timestamp;
         
-        //record how many times call GetinfobyId()
-        timesofGet++;
+            //record how many times call GetinfobyId()
+            timesofGet++;
         
-        //make sure flag-2 exist
-        if(flag>2){
-            timediff = time[flag] - time[flag-3];
-            timediff1 = time[flag] - time[flag-2];
-            timediff2 = time[flag] - time[flag-1];
-        }  
+            //make sure flag-2 exist
+            if(flag>2){
+                timediff = time[flag] - time[flag-3];
+                timediff1 = time[flag] - time[flag-2];
+                timediff2 = time[flag] - time[flag-1];
+            }  
         
-        //flag increment by 1
-        flag++;
+            //flag increment by 1
+            flag++;
         
-        //time over 300s from 4th and 2nd times
-        if(timediff1>300){
-            timesofGet = 2;
-        }
+            //time over 300s from 4th and 2nd times
+            if(timediff1>300){
+                timesofGet = 2;
+            }
         
-        //time over 300s from 4th and 3rd times
-        if(timediff2>300){
-            timesofGet = 1;
-        }
+            //time over 300s from 4th and 3rd times
+            if(timediff2>300){
+                timesofGet = 1;
+            }
     
-        //Request more than 3 times 
-        if(timesofGet>3 && timediff<300){
-            flag--;
-            return (err, 500);
-        } else { //request less or equal to 3 time, we can return the value
-            return (people[pId].name, people[pId].phonenum);
+            //Request more than 3 times 
+            if(timesofGet>3 && timediff<300){
+                flag--;
+                return (err, 500);
+            } else { //request less or equal to 3 time, we can return the value
+                return (people[pId].name, people[pId].phonenum);
+            }
+            }   else    {
+                return ("Not exist this ID of person. Pleack check.", 0);
         }
     } 
     
     //delete the person by Id on the phonebook
     function DeleteInfobyId(uint pId) public returns(string memory){
         if(!check(idofpeople,pId)){
-            return "Not exist this ID. Please check.";
+            return ("Not exist this ID. Please check.");
         }   else    {
+            idofpeople[checkposition(idofpeople,pId)] = 9999999999999; //set an not exist value
             delete people[pId].name;
             delete people[pId].phonenum;
             peoplecount--;
-            return "already delete Successfully!";
+            return ("already delete Successfully!");
         }
     }
 
@@ -117,11 +134,3 @@ contract Phonebook_byID_leo {
         return peoplecount;
     }
 }
-
-//this Contract still exists bugs. 
-//1. delete the same id repetitionally, the Peoplecount() outcome may be differred.
-//Solution of 1: we need to get the position of check() function once find the same value. then -
-//- go back to the idofpeople array of that position of set the value to 0. Then fix.
-//2. Getinfo by ID - if the ID not exist, then call the check() first and we can throw in error message. 
-//That will be better.
-//3. Time[] and idofpeople[] are only length of 100. Try to learn and use Dynamic array in the future.
