@@ -1,4 +1,4 @@
-# Solidity
+# Ethereum
 
 Solidity is the language to write Smart Contract on the Ethereum.
 
