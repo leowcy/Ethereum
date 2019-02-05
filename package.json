@@ -1,0 +1,27 @@
+{
+  "name": "phonebookbyname",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "dev": "nodemon -e js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"npm run dev\" \"cd phonebook-name && npm start\""
+  },
+  "author": "leo",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "concurrently": "^4.1.0",
+    "jsonfile": "^5.0.0",
+    "react-toastify": "^4.5.2"
+  },
+  "devDependencies": {
+    "express": "^4.16.4",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.18.9"
+  }
+}
